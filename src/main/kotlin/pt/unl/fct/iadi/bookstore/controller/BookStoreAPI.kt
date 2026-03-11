@@ -38,16 +38,52 @@ interface BookstoreAPI {
     @Operation(summary = "US2 - Create a book")
     @ApiResponses(
         ApiResponse(responseCode = "201", description = "Created"),
-        ApiResponse(responseCode = "400", description = "Validation Error", content = [Content(schema = Schema(implementation = ErrorResponse::class))]),
-        ApiResponse(responseCode = "409", description = "Conflict", content = [Content(schema = Schema(implementation = ErrorResponse::class))])
+        ApiResponse(
+            responseCode = "400",
+            description = "Validation Error",
+            content = [
+                Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = ErrorResponse::class)
+                )
+            ]
+        ),
+        ApiResponse(
+            responseCode = "409",
+            description = "Conflict",
+            content = [
+                Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = ErrorResponse::class)
+                )
+            ]
+        )
     )
     fun createBook(@Valid @RequestBody request: BookCreateRequest): ResponseEntity<Unit>
 
     @GetMapping("/{isbn}")
     @Operation(summary = "US3 - Get a single book")
     @ApiResponses(
-        ApiResponse(responseCode = "200", description = "Success", content = [Content(schema = Schema(implementation = BookResponse::class))]),
-        ApiResponse(responseCode = "404", description = "Not Found", content = [Content(schema = Schema(implementation = ErrorResponse::class))])
+        ApiResponse(
+            responseCode = "200",
+            description = "Success",
+            content = [
+                Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = BookResponse::class)
+                )
+            ]
+        ),
+        ApiResponse(
+            responseCode = "404",
+            description = "Not Found",
+            content = [
+                Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = ErrorResponse::class)
+                )
+            ]
+        )
     )
     fun getBook(
         @PathVariable isbn: String,
@@ -57,9 +93,36 @@ interface BookstoreAPI {
     @PutMapping("/{isbn}")
     @Operation(summary = "US4 - Replace a book (Upsert)")
     @ApiResponses(
-        ApiResponse(responseCode = "200", description = "Replaced successfully", content = [Content(schema = Schema(implementation = BookResponse::class))]),
-        ApiResponse(responseCode = "201", description = "Created via Upsert", content = [Content(schema = Schema(implementation = BookResponse::class))]),
-        ApiResponse(responseCode = "400", description = "Validation Error", content = [Content(schema = Schema(implementation = ErrorResponse::class))])
+        ApiResponse(
+            responseCode = "200",
+            description = "Replaced successfully",
+            content = [
+                Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = BookResponse::class)
+                )
+            ]
+        ),
+        ApiResponse(
+            responseCode = "201",
+            description = "Created via Upsert",
+            content = [
+                Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = BookResponse::class)
+                )
+            ]
+        ),
+        ApiResponse(
+            responseCode = "400",
+            description = "Validation Error",
+            content = [
+                Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = ErrorResponse::class)
+                )
+            ]
+        )
     )
     fun replaceBook(
         @PathVariable isbn: String,
@@ -69,9 +132,36 @@ interface BookstoreAPI {
     @PatchMapping("/{isbn}")
     @Operation(summary = "US5 - Partially update a book")
     @ApiResponses(
-        ApiResponse(responseCode = "200", description = "Updated successfully", content = [Content(schema = Schema(implementation = BookResponse::class))]),
-        ApiResponse(responseCode = "400", description = "Validation Error", content = [Content(schema = Schema(implementation = ErrorResponse::class))]),
-        ApiResponse(responseCode = "404", description = "Not Found", content = [Content(schema = Schema(implementation = ErrorResponse::class))])
+        ApiResponse(
+            responseCode = "200",
+            description = "Updated successfully",
+            content = [
+                Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = BookResponse::class)
+                )
+            ]
+        ),
+        ApiResponse(
+            responseCode = "400",
+            description = "Validation Error",
+            content = [
+                Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = ErrorResponse::class)
+                )
+            ]
+        ),
+        ApiResponse(
+            responseCode = "404",
+            description = "Not Found",
+            content = [
+                Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = ErrorResponse::class)
+                )
+            ]
+        )
     )
     fun partiallyUpdateBook(
         @PathVariable isbn: String,
@@ -82,7 +172,16 @@ interface BookstoreAPI {
     @Operation(summary = "US6 - Delete a book")
     @ApiResponses(
         ApiResponse(responseCode = "204", description = "No Content"),
-        ApiResponse(responseCode = "404", description = "Not Found", content = [Content(schema = Schema(implementation = ErrorResponse::class))])
+        ApiResponse(
+            responseCode = "404",
+            description = "Not Found",
+            content = [
+                Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = ErrorResponse::class)
+                )
+            ]
+        )
     )
     fun deleteBook(@PathVariable isbn: String): ResponseEntity<Unit>
 
@@ -90,7 +189,16 @@ interface BookstoreAPI {
     @Operation(summary = "US7 - List reviews")
     @ApiResponses(
         ApiResponse(responseCode = "200", description = "Success"),
-        ApiResponse(responseCode = "404", description = "Not Found", content = [Content(schema = Schema(implementation = ErrorResponse::class))])
+        ApiResponse(
+            responseCode = "404",
+            description = "Not Found",
+            content = [
+                Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = ErrorResponse::class)
+                )
+            ]
+        )
     )
     fun listReviews(@PathVariable isbn: String): ResponseEntity<List<ReviewResponse>>
 
@@ -98,8 +206,26 @@ interface BookstoreAPI {
     @Operation(summary = "US8 - Create a review")
     @ApiResponses(
         ApiResponse(responseCode = "201", description = "Created"),
-        ApiResponse(responseCode = "400", description = "Validation Error", content = [Content(schema = Schema(implementation = ErrorResponse::class))]),
-        ApiResponse(responseCode = "404", description = "Not Found", content = [Content(schema = Schema(implementation = ErrorResponse::class))])
+        ApiResponse(
+            responseCode = "400",
+            description = "Validation Error",
+            content = [
+                Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = ErrorResponse::class)
+                )
+            ]
+        ),
+        ApiResponse(
+            responseCode = "404",
+            description = "Not Found",
+            content = [
+                Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = ErrorResponse::class)
+                )
+            ]
+        )
     )
     fun createReview(
         @PathVariable isbn: String,
@@ -109,9 +235,36 @@ interface BookstoreAPI {
     @PutMapping("/{isbn}/reviews/{reviewId}")
     @Operation(summary = "US9 - Replace a review")
     @ApiResponses(
-        ApiResponse(responseCode = "200", description = "Replaced"),
-        ApiResponse(responseCode = "400", description = "Validation Error", content = [Content(schema = Schema(implementation = ErrorResponse::class))]),
-        ApiResponse(responseCode = "404", description = "Not Found", content = [Content(schema = Schema(implementation = ErrorResponse::class))])
+        ApiResponse(
+            responseCode = "200",
+            description = "Replaced",
+            content = [
+                Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = ReviewResponse::class)
+                )
+            ]
+        ),
+        ApiResponse(
+            responseCode = "400",
+            description = "Validation Error",
+            content = [
+                Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = ErrorResponse::class)
+                )
+            ]
+        ),
+        ApiResponse(
+            responseCode = "404",
+            description = "Not Found",
+            content = [
+                Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = ErrorResponse::class)
+                )
+            ]
+        )
     )
     fun replaceReview(
         @PathVariable isbn: String,
@@ -122,9 +275,36 @@ interface BookstoreAPI {
     @PatchMapping("/{isbn}/reviews/{reviewId}")
     @Operation(summary = "US10 - Partially update a review")
     @ApiResponses(
-        ApiResponse(responseCode = "200", description = "Updated"),
-        ApiResponse(responseCode = "400", description = "Validation Error", content = [Content(schema = Schema(implementation = ErrorResponse::class))]),
-        ApiResponse(responseCode = "404", description = "Not Found", content = [Content(schema = Schema(implementation = ErrorResponse::class))])
+        ApiResponse(
+            responseCode = "200",
+            description = "Updated",
+            content = [
+                Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = ReviewResponse::class)
+                )
+            ]
+        ),
+        ApiResponse(
+            responseCode = "400",
+            description = "Validation Error",
+            content = [
+                Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = ErrorResponse::class)
+                )
+            ]
+        ),
+        ApiResponse(
+            responseCode = "404",
+            description = "Not Found",
+            content = [
+                Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = ErrorResponse::class)
+                )
+            ]
+        )
     )
     fun partiallyUpdateReview(
         @PathVariable isbn: String,
@@ -136,7 +316,16 @@ interface BookstoreAPI {
     @Operation(summary = "US11 - Delete a review")
     @ApiResponses(
         ApiResponse(responseCode = "204", description = "No Content"),
-        ApiResponse(responseCode = "404", description = "Not Found", content = [Content(schema = Schema(implementation = ErrorResponse::class))])
+        ApiResponse(
+            responseCode = "404",
+            description = "Not Found",
+            content = [
+                Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = ErrorResponse::class)
+                )
+            ]
+        )
     )
     fun deleteReview(
         @PathVariable isbn: String,
