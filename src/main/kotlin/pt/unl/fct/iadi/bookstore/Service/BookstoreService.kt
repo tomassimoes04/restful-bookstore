@@ -28,10 +28,11 @@ class BookstoreService {
         return books[isbn] ?: throw BookNotFoundException(isbn)
     }
 
-    fun replaceBook(isbn: String, book: Book): Book {
+    fun replaceBook(isbn: String, book: Book): Pair<Book, Boolean> {
+        val isNew = !books.containsKey(isbn)
         val updatedBook = book.copy(isbn = isbn)
         books[isbn] = updatedBook
-        return updatedBook
+        return Pair(updatedBook, isNew)
     }
 
     fun partiallyUpdateBook(isbn: String, title: String?, author: String?, price: BigDecimal?, image: String?): Book {
@@ -57,10 +58,10 @@ class BookstoreService {
     }
 
     fun createReview(isbn: String, rating: Int, comment: String?): Review {
-        getBook(isbn) // Validate book exists
-        val id = reviewIdGenerator.getAndIncrement()
-        val review = Review(id, isbn, rating, comment)
-        reviews[id] = review
+        getBook(isbn)
+        val newReviewId = reviewIdGenerator.getAndIncrement()
+        val review = Review(newReviewId, isbn, rating, comment)
+        reviews[newReviewId] = review
         return review
     }
 

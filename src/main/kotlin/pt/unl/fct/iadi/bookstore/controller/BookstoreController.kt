@@ -3,17 +3,20 @@ package pt.unl.fct.iadi.bookstore.controller
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
-import pt.unl.fct.iadi.bookstore.controller.dto.*
+import pt.unl.fct.iadi.bookstore.controller.dto.BookCreateRequest
+import pt.unl.fct.iadi.bookstore.controller.dto.BookPartialUpdateRequest
+import pt.unl.fct.iadi.bookstore.controller.dto.BookResponse
+import pt.unl.fct.iadi.bookstore.controller.dto.ReviewCreateRequest
+import pt.unl.fct.iadi.bookstore.controller.dto.ReviewPartialUpdateRequest
+import pt.unl.fct.iadi.bookstore.controller.dto.ReviewResponse
 import pt.unl.fct.iadi.bookstore.domain.Book
 import pt.unl.fct.iadi.bookstore.service.BookstoreService
 
 @RestController
 class BookstoreController(private val service: BookstoreService) : BookstoreAPI {
 
-
     private fun Book.toDto() = BookResponse(isbn, title, author, price, image)
     private fun pt.unl.fct.iadi.bookstore.domain.Review.toDto() = ReviewResponse(id, rating, comment)
-
 
     override fun listBooks(): ResponseEntity<List<BookResponse>> {
         val response = service.getAllBooks().map { it.toDto() }
@@ -22,7 +25,6 @@ class BookstoreController(private val service: BookstoreService) : BookstoreAPI 
 
     override fun createBook(request: BookCreateRequest): ResponseEntity<Unit> {
         val book = service.createBook(Book(request.isbn, request.title, request.author, request.price, request.image))
-
         val location = ServletUriComponentsBuilder.fromCurrentRequest()
             .path("/{isbn}").buildAndExpand(book.isbn).toUri()
         return ResponseEntity.created(location).build()
@@ -31,14 +33,20 @@ class BookstoreController(private val service: BookstoreService) : BookstoreAPI 
     override fun getBook(isbn: String, language: String): ResponseEntity<BookResponse> {
         val book = service.getBook(isbn)
         val contentLang = if (language.lowercase().startsWith("pt")) "pt" else "en"
-
         return ResponseEntity.ok().header("Content-Language", contentLang).body(book.toDto())
     }
 
     override fun replaceBook(isbn: String, request: BookCreateRequest): ResponseEntity<BookResponse> {
         val bookToSave = Book(isbn, request.title, request.author, request.price, request.image)
-        val updatedBook = service.replaceBook(isbn, bookToSave)
-        return ResponseEntity.ok(updatedBook.toDto())
+
+        val (updatedBook, isNew) = service.replaceBook(isbn, bookToSave)
+
+        return if (isNew) {
+            val location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri()
+            ResponseEntity.created(location).body(updatedBook.toDto())
+        } else {
+            ResponseEntity.ok(updatedBook.toDto())
+        }
     }
 
     override fun partiallyUpdateBook(isbn: String, request: BookPartialUpdateRequest): ResponseEntity<BookResponse> {
@@ -58,7 +66,6 @@ class BookstoreController(private val service: BookstoreService) : BookstoreAPI 
 
     override fun createReview(isbn: String, request: ReviewCreateRequest): ResponseEntity<Unit> {
         val review = service.createReview(isbn, request.rating, request.comment)
-
         val location = ServletUriComponentsBuilder.fromCurrentRequest()
             .path("/{id}").buildAndExpand(review.id).toUri()
         return ResponseEntity.created(location).build()

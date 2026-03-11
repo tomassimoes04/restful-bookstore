@@ -1,9 +1,13 @@
 package pt.unl.fct.iadi.bookstore.controller.dto
 
-import jakarta.validation.constraints.*
+import jakarta.validation.constraints.DecimalMin
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotNull
+import jakarta.validation.constraints.Pattern
+import jakarta.validation.constraints.Size
 import java.math.BigDecimal
 
-// --- Requests ---
+
 
 data class BookCreateRequest(
     @field:NotBlank(message = "ISBN cannot be blank")
