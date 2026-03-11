@@ -1,0 +1,188 @@
+### Variables
+@host = http://localhost:8080
+@validIsbn = 9780134685991
+@invalidIsbn = 0000000000000
+
+# ==========================================
+# US1 — List books
+# ==========================================
+
+### US1 - Get all books (Success - initially empty)
+GET {{host}}/books
+Accept: application/json
+
+# ==========================================
+# US2 — Create a book
+# ==========================================
+
+### US2 - Create a new book (Success)
+POST {{host}}/books
+Content-Type: application/json
+
+{
+  "isbn": "{{validIsbn}}",
+  "title": "Effective Java",
+  "author": "Joshua Bloch",
+  "price": 45.99,
+  "image": "https://example.com/effective-java.jpg"
+}
+
+### US2 - Create a book (Error - Conflict 409)
+# Run the success request above first, then run this one to trigger the conflict
+POST {{host}}/books
+Content-Type: application/json
+
+{
+  "isbn": "{{validIsbn}}",
+  "title": "Duplicate Book",
+  "author": "John Doe",
+  "price": 10.00,
+  "image": "https://example.com/dup.jpg"
+}
+
+### US2 - Create a book (Error - Validation 400: Negative price & bad URL)
+POST {{host}}/books
+Content-Type: application/json
+
+{
+  "isbn": "123456789",
+  "title": "Bad Book",
+  "author": "Bad Author",
+  "price": -5.00,
+  "image": "not-a-url"
+}
+
+# ==========================================
+# US3 — Get a single book
+# ==========================================
+
+### US3 - Get a single book (Success - default English)
+GET {{host}}/books/{{validIsbn}}
+Accept: application/json
+Accept-Language: en
+
+### US3 - Get a single book (Error - Not Found 404 in Portuguese)
+# Notice the Accept-Language header changing the error message language
+GET {{host}}/books/{{invalidIsbn}}
+Accept: application/json
+Accept-Language: pt-PT
+
+# ==========================================
+# US4 — Replace a book
+# ==========================================
+
+### US4 - Replace a book (Success)
+PUT {{host}}/books/{{validIsbn}}
+Content-Type: application/json
+
+{
+  "isbn": "{{validIsbn}}",
+  "title": "Effective Java - 3rd Edition",
+  "author": "Joshua Bloch",
+  "price": 50.00,
+  "image": "https://example.com/effective-java-3.jpg"
+}
+
+### US4 - Replace a book (Success - Upsert behavior for a new book)
+PUT {{host}}/books/9780201616224
+Content-Type: application/json
+
+{
+  "isbn": "9780201616224",
+  "title": "The Pragmatic Programmer",
+  "author": "Andrew Hunt",
+  "price": 40.00,
+  "image": "https://example.com/pragmatic.jpg"
+}
+
+# ==========================================
+# US5 — Partially update a book
+# ==========================================
+
+### US5 - Partially update a book (Success - only updating price)
+PATCH {{host}}/books/{{validIsbn}}
+Content-Type: application/json
+
+{
+  "price": 39.99
+}
+
+### US5 - Partially update a book (Error - Not Found 404)
+PATCH {{host}}/books/{{invalidIsbn}}
+Content-Type: application/json
+
+{
+  "price": 10.00
+}
+
+# ==========================================
+# US7 & US8 — Reviews (Create & List)
+# ==========================================
+
+### US8 - Create a review for a book (Success)
+POST {{host}}/books/{{validIsbn}}/reviews
+Content-Type: application/json
+
+{
+  "rating": 5,
+  "comment": "An absolute classic for Java developers!"
+}
+
+### US8 - Create a review for a book (Error - Validation 400: Rating > 5)
+POST {{host}}/books/{{validIsbn}}/reviews
+Content-Type: application/json
+
+{
+  "rating": 10,
+  "comment": "Too good to be true."
+}
+
+### US8 - Create a review for a book (Error - Not Found 404: Book doesn't exist)
+POST {{host}}/books/{{invalidIsbn}}/reviews
+Content-Type: application/json
+
+{
+  "rating": 4
+}
+
+### US7 - List reviews for a book (Success)
+GET {{host}}/books/{{validIsbn}}/reviews
+Accept: application/json
+
+# ==========================================
+# US9 & US10 — Reviews (Replace & Partial Update)
+# ==========================================
+
+### US9 - Replace a review (Success)
+# Assuming the ID of the created review is 1 (since it's an AtomicLong starting at 1)
+PUT {{host}}/books/{{validIsbn}}/reviews/1
+Content-Type: application/json
+
+{
+  "rating": 4,
+  "comment": "Great, but a bit dry to read."
+}
+
+### US10 - Partially update a review (Success - just changing rating)
+PATCH {{host}}/books/{{validIsbn}}/reviews/1
+Content-Type: application/json
+
+{
+  "rating": 3
+}
+
+# ==========================================
+# US11 & US6 — Delete operations
+# ==========================================
+
+### US11 - Delete a review (Success)
+DELETE {{host}}/books/{{validIsbn}}/reviews/1
+
+### US11 - Delete a review (Error - Not Found 404)
+DELETE {{host}}/books/{{validIsbn}}/reviews/999
+
+### US6 - Delete a book (Success - returns 204 No Content)
+DELETE {{host}}/books/{{validIsbn}}
+
+### US6 - Delete a book (Error - Not Found 404)
+DELETE {{host}}/books/{{invalidIsbn}}
